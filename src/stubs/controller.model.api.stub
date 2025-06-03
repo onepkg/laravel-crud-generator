@@ -26,8 +26,8 @@ class {{ class }} extends Controller
             $query->search($request->validated(), $customized);
         } else if (method_exists($this, 'search')) {
             $this->search($query, $request->validated(), $customized);
-        } else if (function_exists('\auto_search')) {
-            \auto_search($query, $request->validated(), $customized);
+        } else if (function_exists('\auto_build_query')) {
+            \auto_build_query($query, $request->validated(), $customized);
         }
 
         $paginator = $query
