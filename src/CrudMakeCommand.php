@@ -149,7 +149,7 @@ class CrudMakeCommand extends Command
 Route::group(['prefix' => '{$uri}', 'middleware' => ['auth:admin']], function () {
     Route::get('show', ['\\\\'.{$controller}::class, 'index']);
     Route::post('create', ['\\\\'.{$controller}::class, 'store']);
-    Route::post('view', ['\\\\'.{$controller}::class, 'show']);
+    Route::get('view', ['\\\\'.{$controller}::class, 'show']);
     Route::post('update', ['\\\\'.{$controller}::class, 'update']);
     Route::post('delete', ['\\\\'.{$controller}::class, 'destroy']);
 });
