@@ -40,37 +40,37 @@ class CrudMakeCommand extends Command
         $table = $this->argument('name');
         $name = Str::studly($table);
 
-        $this->call('make:crud-model', [
+        $this->call('one-pkg:make-model', [
             'name' => $this->getModelName($name),
             '--table' => $table,
             '--force' => $this->option('force'),
         ]);
-        $this->call('make:crud-request', [
+        $this->call('one-pkg:make-request', [
             'name' => $this->getIndexRequestName($name),
             '--table' => $table,
             '--force' => $this->option('force'),
         ]);
-        $this->call('make:crud-request', [
+        $this->call('one-pkg:make-request', [
             'name' => $this->getStoreRequestName($name),
             '--table' => $table,
             '--force' => $this->option('force'),
         ]);
-        $this->call('make:crud-request', [
+        $this->call('one-pkg:make-request', [
             'name' => $this->getUpdateRequestName($name),
             '--table' => $table,
             '--force' => $this->option('force'),
         ]);
-        $this->call('make:crud-resource', [
+        $this->call('one-pkg:make-resource', [
             'name' => $this->getResourceName($name),
             '--parent' => Config::get('crud-generator.parentJsonResource'),
             '--force' => $this->option('force'),
         ]);
-        $this->call('make:crud-resource', [
+        $this->call('one-pkg:make-resource', [
             'name' => $this->getCollectionName($name),
             '--parent' => Config::get('crud-generator.parentResourceCollection'),
             '--force' => $this->option('force'),
         ]);
-        $this->call('make:crud-controller', [
+        $this->call('one-pkg:make-controller', [
             'name' => $this->getControllerName($name),
             '--model' => $this->getModelName($name),
             '--perPageParam' => Config::get('crud-generator.perPageParam'),
