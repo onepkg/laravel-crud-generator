@@ -17,7 +17,7 @@ class RequestMakeCommand extends ConsoleRequestMakeCommand
      *
      * @var string
      */
-    protected $name = 'one-php:make-request';
+    protected $name = 'one-pkg:make-request';
 
     /**
      * Build the class with the given name.

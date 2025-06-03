@@ -14,7 +14,7 @@ class ControllerMakeCommand extends ConsoleControllerMakeCommand
      *
      * @var string
      */
-    protected $signature = 'one-php:make-controller';
+    protected $signature = 'one-pkg:make-controller';
 
     public function __construct(Filesystem $files)
     {

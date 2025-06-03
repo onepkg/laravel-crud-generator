@@ -16,7 +16,7 @@ class ResourceMakeCommand extends ConsoleResourceMakeCommand
      *
      * @var string
      */
-    protected $signature = 'one-php:make-resource';
+    protected $signature = 'one-pkg:make-resource';
 
     public function __construct(Filesystem $files)
     {

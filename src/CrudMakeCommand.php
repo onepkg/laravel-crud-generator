@@ -15,7 +15,7 @@ class CrudMakeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'one-php:make-crud';
+    protected $signature = 'one-pkg:make-crud';
 
     /**
      * The console command description.
@@ -62,19 +62,19 @@ class CrudMakeCommand extends Command
         ]);
         $this->call('make:crud-resource', [
             'name' => $this->getResourceName($name),
-            '--parent' => Config::get('crud.parentJsonResource'),
+            '--parent' => Config::get('crud-generator.parentJsonResource'),
             '--force' => $this->option('force'),
         ]);
         $this->call('make:crud-resource', [
             'name' => $this->getCollectionName($name),
-            '--parent' => Config::get('crud.parentResourceCollection'),
+            '--parent' => Config::get('crud-generator.parentResourceCollection'),
             '--force' => $this->option('force'),
         ]);
         $this->call('make:crud-controller', [
             'name' => $this->getControllerName($name),
             '--model' => $this->getModelName($name),
-            '--perPageParam' => Config::get('crud.perPageParam'),
-            '--perPage' => Config::get('crud.perPage'),
+            '--perPageParam' => Config::get('crud-generator.perPageParam'),
+            '--perPage' => Config::get('crud-generator.perPage'),
             '--force' => $this->option('force'),
         ]);
 
@@ -86,37 +86,37 @@ class CrudMakeCommand extends Command
 
     protected function getModelName(string $name): string
     {
-        return $this->buildName(Config::get('crud.namespacedModel'), $name);
+        return $this->buildName(Config::get('crud-generator.namespacedModel'), $name);
     }
 
     protected function getIndexRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud.namespacedRequest'), "Index{$name}Request");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "Index{$name}Request");
     }
 
     protected function getStoreRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud.namespacedRequest'), "Store{$name}Request");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "Store{$name}Request");
     }
 
     protected function getUpdateRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud.namespacedRequest'), "Update{$name}Request");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "Update{$name}Request");
     }
 
     protected function getResourceName(string $name): string
     {
-        return $this->buildName(Config::get('crud.namespacedResource'), "{$name}Resource");
+        return $this->buildName(Config::get('crud-generator.namespacedResource'), "{$name}Resource");
     }
 
     protected function getCollectionName(string $name): string
     {
-        return $this->buildName(Config::get('crud.namespacedResource'), "{$name}Collection");
+        return $this->buildName(Config::get('crud-generator.namespacedResource'), "{$name}Collection");
     }
 
     protected function getControllerName(string $name): string
     {
-        return $this->buildName(Config::get('crud.namespacedController'), "{$name}Controller");
+        return $this->buildName(Config::get('crud-generator.namespacedController'), "{$name}Controller");
     }
 
     protected function getNamespace(): string

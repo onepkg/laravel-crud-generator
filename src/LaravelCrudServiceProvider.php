@@ -19,6 +19,10 @@ class LaravelCrudServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->publishes([
+            __DIR__.'/../config/courier.php' => config_path('crud-generator.php'),
+        ]);
+
         $this->registerCommands();
     }
 

@@ -14,7 +14,7 @@ class ModelMakeCommand extends ConsoleModelMakeCommand
      *
      * @var string
      */
-    protected $name = 'one-php:make-model';
+    protected $name = 'one-pkg:make-model';
 
     /**
      * Execute the console command.
