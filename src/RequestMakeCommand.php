@@ -1,0 +1,227 @@
+<?php
+
+namespace OnePkg\LaravelCrudGenerator;
+
+use Illuminate\Console\Concerns\CreatesMatchingTest;
+use Illuminate\Foundation\Console\RequestMakeCommand as ConsoleRequestMakeCommand;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Symfony\Component\Console\Input\InputOption;
+
+class RequestMakeCommand extends ConsoleRequestMakeCommand
+{
+    use CreatesMatchingTest;
+
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'one-php:make-request';
+
+    /**
+     * Build the class with the given name.
+     *
+     * @param  string  $name
+     * @return string
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    protected function buildClass($name)
+    {
+        $stub = $this->files->get($this->getStub());
+
+        return $this
+                ->replaceValidationRules($stub, $name)
+                ->replaceNamespace($stub, $name)
+                ->replaceClass($stub, $name);
+    }
+
+    /**
+     * Replace the rules for the given stub.
+     *
+     * @param  string  $stub
+     * @param  string  $name
+     * @return $this
+     */
+    protected function replaceValidationRules(&$stub, $name)
+    {
+        $rules = $this->getValidationRules($name);
+
+        $searches = [
+            ['DummyRules'],
+            ['{{ rules }}'],
+            ['{{rules}}'],
+        ];
+
+        foreach ($searches as $search) {
+            $stub = str_replace(
+                $search,
+                $rules,
+                $stub
+            );
+        }
+
+        return $this;
+    }
+
+    protected function getValidationRules(string $name): string
+    {
+        $table = $this->getTable($name);
+        $columns = Schema::getColumns($table);
+        $indexes = Schema::getUniqueIndexes($table);
+
+        $rules = '';
+        foreach ($columns as $column) {
+            $columnName = $column->COLUMN_NAME;
+            if ($columnName === 'id') {
+                continue;
+            }
+
+            $columnValidationRules = $this->getColumnValidationRules($column, Arr::get($indexes, $columnName, []));
+            if (!Str::startsWith($columnValidationRules, '[') || !Str::endsWith($columnValidationRules, ']')) {
+                $columnValidationRules = "'{$columnValidationRules}'";
+            }
+            $rules .= sprintf(
+                "\t\t\t'%s' => %s,\n", 
+                $columnName, 
+                $columnValidationRules
+            );
+        }
+
+        return rtrim($rules, "\n");
+    }
+
+    protected function getColumnValidationRules(object $column, array $index = [])
+    {
+        $name = $this->argument('name');
+        $rules = [];
+
+        if ($column->IS_NULLABLE === 'NO' && $column->COLUMN_DEFAULT === null && !Str::startsWith(class_basename($name), 'Index')) {
+            $rules[] = 'required';
+        }
+
+        $columnType = $column->COLUMN_TYPE;
+        if (Str::contains($columnType, 'int')) {
+            $rules[] = 'integer';
+        } else if (Str::contains($columnType, 'varchar')) {
+            $length = preg_match('/varchar\((\d+)\)/', $columnType, $matches) ? $matches[1] : 255;
+            $rules[] = "string|max:{$length}";
+        } else if (Str::contains($columnType, 'text')) {
+            $rules[] = 'string';
+        } else if (Str::contains($columnType, 'date') || Str::contains($columnType, 'timestamp')) {
+            $rules[] = 'date';
+        } else if (Str::contains($columnType, 'decimal')) {
+            $rules[] = 'numeric';
+        }
+        
+        $columnName = $column->COLUMN_NAME;
+        if (str_contains($columnName, 'email')) {
+            $rules[] = 'email';
+        } else if (str_contains($columnName, 'url')) {
+            $rules[] = 'url';
+        }
+
+        if (Str::startsWith($name, 'Index')) {
+            return implode('|', $rules);
+        }
+
+        $indexColumnCount = count($index);
+        $table = $this->getTable($name);
+
+        if ($indexColumnCount === 1) {
+            $rules[] = sprintf('unique:%s,%s', $table, $columnName);
+        }
+
+        if ($indexColumnCount < 2) {
+            return implode('|', $rules);
+        }
+
+        $format = 'Rule::unique(\'%s\')->where(function ($query) { %s })%s';
+        $where  = '';
+        $ignore = '';
+        foreach ($index as $indexColumn) {
+            if ($column->COLUMN_NAME === $indexColumn->Column_name) {
+                continue;
+            }
+
+            $where .= sprintf('$query->where(\'%s\', $this->%s);', $indexColumn->Column_name, $indexColumn->Column_name);
+        }
+        $requestClass = class_basename($name);
+        if (Str::startsWith($requestClass, 'Update')) {
+            $ignore = '->ignore($this->id)';
+        }
+
+        $rules[] = sprintf($format, $table, $where, $ignore);
+
+        $result = '[';
+        foreach ($rules as $rule) {
+            if (Str::startsWith($rule, 'Rule::unique')) {
+                $result .= "{$rule}, ";
+            } else {
+                $result .= "'{$rule}', ";
+            }
+        }
+        $result = trim($result, ', ');
+        $result .= ']';
+
+        return $result;
+    }
+
+    protected function getTable(string $name)
+    {
+        $table = $this->option('table');
+        if ($table) {
+            return $table;
+        }
+
+        $model = $this->option('model');
+        if ($model) {
+            $table = Str::snake(Str::pluralStudly(class_basename($model)));
+            return $table;
+        }
+
+        $table = class_basename($name);
+        $table = Str::replaceLast('Request', '', $table);
+        $table = Str::snake(Str::pluralStudly($table));
+
+        return $table;
+    }
+
+    /**
+     * Get the stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getStub()
+    {
+        return $this->resolveStubPath('/stubs/request.stub');
+    }
+
+    /**
+     * Resolve the fully-qualified path to the stub.
+     *
+     * @param  string  $stub
+     * @return string
+     */
+    protected function resolveStubPath($stub)
+    {
+        return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
+                        ? $customPath
+                        : __DIR__.$stub;
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['force', null, InputOption::VALUE_NONE, 'Create the class even if the request already exists'],
+            ['table', null, InputOption::VALUE_REQUIRED, 'The table name.'],
+            ['model', null, InputOption::VALUE_REQUIRED, 'The model class.'],
+        ];
+    }
+}
