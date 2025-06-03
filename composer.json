@@ -32,7 +32,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "\\OnePkg\\LaravelCrudGenerator\\CrudGeneratorServiceProvider"
+                "\\OnePkg\\LaravelCrudGenerator\\LaravelCrudServiceProvider"
             ]
         }
     },
