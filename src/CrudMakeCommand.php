@@ -144,8 +144,17 @@ class CrudMakeCommand extends Command
         $routesPath = base_path("routes/{$route}.php");
 
         $uri = $this->buildUri($controller);
-        $routeLine = "\nRoute::apiResource('{$uri}', '\\\\'.{$controller}::class);\n";
+        $routeLine = <<<LINE
 
+Route::group(['prefix' => '{$uri}', 'middleware' => ['auth:admin']], function () {
+    Route::get('show', ['\\\\'.{$controller}::class, 'index']);
+    Route::post('create', ['\\\\'.{$controller}::class, 'store']);
+    Route::post('view', ['\\\\'.{$controller}::class, 'show']);
+    Route::post('update', ['\\\\'.{$controller}::class, 'update']);
+    Route::post('delete', ['\\\\'.{$controller}::class, 'destroy']);
+});
+
+LINE;
         file_put_contents($routesPath, $routeLine, FILE_APPEND);
     }
 
