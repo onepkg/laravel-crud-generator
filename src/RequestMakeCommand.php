@@ -104,17 +104,25 @@ class RequestMakeCommand extends ConsoleRequestMakeCommand
         
         $max = $column->CHARACTER_MAXIMUM_LENGTH;
 
-        $columnType = $column->COLUMN_TYPE;
-        if (Str::contains($columnType, 'int')) {
+        $dataType = $column->DATA_TYPE;
+        if (Str::contains($dataType, 'int')) {
             $rules[] = 'integer';
-        } else if (Str::contains($columnType, 'varchar')) {
+        } else if (Str::contains($dataType, 'char') || Str::contains($dataType, 'text')) {
             $rules[] = 'string';
-        } else if (Str::contains($columnType, 'text')) {
-            $rules[] = 'string';
-        } else if (Str::contains($columnType, 'date') || Str::contains($columnType, 'timestamp')) {
+        } else if (in_array($dataType, ['datetime', 'timestamp'])) {
+            $rules[] = 'date_format:Y-m-d H:i:s';
+        } else if (in_array($dataType, ['date'])) {
             $rules[] = 'date';
-        } else if (Str::contains($columnType, 'decimal')) {
+        } else if (in_array($dataType, ['decimal', 'float', 'double'])) {
             $rules[] = 'numeric';
+        } else if ($dataType === 'json') {
+            $rules[] = 'json';
+        } else if ($dataType === 'enum') {
+            $enum = preg_match('/enum\((\S+)\)/', $column->COLUMN_TYPE, $matches) ? $matches[1] : '';
+            if ($enum) {
+                $enum = str_replace("'", '', $enum);
+                $rules[] = "in:{$enum}";
+            }
         }
 
         if ($max) {
