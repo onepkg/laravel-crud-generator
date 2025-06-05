@@ -123,6 +123,7 @@ class RequestMakeCommand extends ConsoleRequestMakeCommand
                 $enum = str_replace("'", '', $enum);
                 $rules[] = "in:{$enum}";
             }
+            $max = null;
         }
 
         if ($max) {
