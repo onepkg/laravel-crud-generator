@@ -17,7 +17,7 @@ class Schema
     {
         $table = self::getTrueTable($table);
         $sql = "select * from information_schema.columns where table_name = '{$table}'";
-        $columns = DB::select($sql);
+        $columns = collect(DB::select($sql))->sortBy('ORDINAL_POSITION')->all();
 
         return $columns;
     }
