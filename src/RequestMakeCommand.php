@@ -74,7 +74,8 @@ class RequestMakeCommand extends ConsoleRequestMakeCommand
         $rules = '';
         foreach ($columns as $column) {
             $columnName = $column->COLUMN_NAME;
-            if ($columnName === 'id') {
+
+            if (in_array($columnName, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
                 continue;
             }
 
@@ -100,19 +101,24 @@ class RequestMakeCommand extends ConsoleRequestMakeCommand
         if ($column->IS_NULLABLE === 'NO' && $column->COLUMN_DEFAULT === null && !Str::startsWith(class_basename($name), 'Index')) {
             $rules[] = 'required';
         }
+        
+        $max = $column->CHARACTER_MAXIMUM_LENGTH;
 
         $columnType = $column->COLUMN_TYPE;
         if (Str::contains($columnType, 'int')) {
             $rules[] = 'integer';
         } else if (Str::contains($columnType, 'varchar')) {
-            $length = preg_match('/varchar\((\d+)\)/', $columnType, $matches) ? $matches[1] : 255;
-            $rules[] = "string|max:{$length}";
+            $rules[] = 'string';
         } else if (Str::contains($columnType, 'text')) {
             $rules[] = 'string';
         } else if (Str::contains($columnType, 'date') || Str::contains($columnType, 'timestamp')) {
             $rules[] = 'date';
         } else if (Str::contains($columnType, 'decimal')) {
             $rules[] = 'numeric';
+        }
+
+        if ($max) {
+            $rules[] = "max:{$max}";
         }
         
         $columnName = $column->COLUMN_NAME;
