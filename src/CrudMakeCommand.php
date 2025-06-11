@@ -91,17 +91,17 @@ class CrudMakeCommand extends Command
 
     protected function getIndexRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "Index{$name}Request");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "{$name}ListRequest");
     }
 
     protected function getStoreRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "Store{$name}Request");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "{$name}StoreRequest");
     }
 
     protected function getUpdateRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "Update{$name}Request");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "{$name}UpdateRequest");
     }
 
     protected function getResourceName(string $name): string
