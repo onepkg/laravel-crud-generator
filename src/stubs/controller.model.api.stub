@@ -32,7 +32,7 @@ class {{ class }} extends Controller
 
         $paginator = $query
             ->orderBy('id', 'desc')
-            ->paginate($request->query('{{ perPage }}', {{ defaultPageSize }}));
+            ->paginate($request->query('per-page', 10));
 
         return {{ collection }}::make($paginator);
     }

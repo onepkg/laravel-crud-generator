@@ -5,7 +5,6 @@ namespace OnePkg\LaravelCrudGenerator;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Console\ControllerMakeCommand as ConsoleControllerMakeCommand;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Input\InputOption;
 
 class ControllerMakeCommand extends ConsoleControllerMakeCommand
 {
@@ -57,9 +56,8 @@ class ControllerMakeCommand extends ConsoleControllerMakeCommand
 
         $requestReplace = $this->buildFormRequestReplacements($replace, $modelClass);
         $resourceReplace = $this->buildResourceReplacements($replace, $modelClass);
-        $paginatorReplace = $this->buildPaginatorReplacements($replace);
 
-        return array_merge($requestReplace, $resourceReplace, $paginatorReplace, [
+        return array_merge($requestReplace, $resourceReplace, [
             'DummyFullModelClass' => $modelClass,
             '{{ namespacedModel }}' => $modelClass,
             '{{namespacedModel}}' => $modelClass,
@@ -141,30 +139,5 @@ class ControllerMakeCommand extends ConsoleControllerMakeCommand
         }
 
         return Str::replaceFirst($defaultNamespace, $namespace, $controllerNamespace);
-    }
-
-    protected function buildPaginatorReplacements(array $replace)
-    {
-        return array_merge($replace, [
-            '{{ perPage }}' => $this->option('perPageParam'),
-            '{{perPage}}' => $this->option('perPageParam'),
-            '{{ defaultPageSize }}' => $this->option('perPage'),
-            '{{defaultPageSize}}' => $this->option('perPage'),
-        ]);
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        $options = parent::getOptions();
-
-        return array_merge($options, [
-            ['perPageParam', null, InputOption::VALUE_OPTIONAL, 'Pagination parameter', 'per-page'],
-            ['perPage', null, InputOption::VALUE_OPTIONAL, 'Pagination parameter', 10],
-        ]);
     }
 }
