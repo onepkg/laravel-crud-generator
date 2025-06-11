@@ -84,9 +84,9 @@ class ControllerMakeCommand extends ConsoleControllerMakeCommand
         $namespace = $this->getNamespaceWith('App\\Http\\Requests');
 
         $classBasename = class_basename($modelClass);
-        $indexRequestClass = 'Index'.$classBasename.'Request';
-        $storeRequestClass = 'Store'.$classBasename.'Request';
-        $updateRequestClass = 'Update'.$classBasename.'Request';
+        $indexRequestClass = $classBasename.'ListRequest';
+        $storeRequestClass = $classBasename.'StoreRequest';
+        $updateRequestClass = $classBasename.'UpdateRequest';
 
         return array_merge($replace, [
             '{{ indexRequest }}' => $indexRequestClass,
@@ -136,6 +136,9 @@ class ControllerMakeCommand extends ConsoleControllerMakeCommand
         $rootNamespace = $this->rootNamespace();
         $defaultNamespace = $this->getDefaultNamespace(trim($rootNamespace, '\\'));
         $controllerNamespace = $this->getNamespace($this->argument('name'));
+        if (!$controllerNamespace) {
+            $controllerNamespace = $defaultNamespace;
+        }
 
         return Str::replaceFirst($defaultNamespace, $namespace, $controllerNamespace);
     }

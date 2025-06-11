@@ -37,8 +37,8 @@ class CrudMakeCommand extends Command
      */
     public function handle()
     {
-        $table = $this->argument('name');
-        $name = Str::studly($table);
+        $name = Str::ucfirst($this->argument('name'));
+        $table = $this->getTable($name);
 
         $this->call('one-pkg:make-model', [
             'name' => $this->getModelName($name),
@@ -73,8 +73,6 @@ class CrudMakeCommand extends Command
         $this->call('one-pkg:make-controller', [
             'name' => $this->getControllerName($name),
             '--model' => $this->getModelName($name),
-            '--perPageParam' => Config::get('crud-generator.perPageParam'),
-            '--perPage' => Config::get('crud-generator.perPage'),
             '--force' => $this->option('force'),
         ]);
 
@@ -84,55 +82,52 @@ class CrudMakeCommand extends Command
         return 0;
     }
 
+    protected function getTable(string $name)
+    {
+        return $this->option('table') ?: Str::snake(Str::plural($name));
+    }
+
     protected function getModelName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedModel'), $name);
+        return $this->buildName(Config::get('crud-generator.namespacedModel', ''), $name);
     }
 
     protected function getIndexRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "{$name}ListRequest");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest', ''), "{$name}ListRequest");
     }
 
     protected function getStoreRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "{$name}StoreRequest");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest', ''), "{$name}StoreRequest");
     }
 
     protected function getUpdateRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedRequest'), "{$name}UpdateRequest");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest', ''), "{$name}UpdateRequest");
     }
 
     protected function getResourceName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedResource'), "{$name}Resource");
+        return $this->buildName(Config::get('crud-generator.namespacedResource', ''), "{$name}Resource");
     }
 
     protected function getCollectionName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedResource'), "{$name}Collection");
+        return $this->buildName(Config::get('crud-generator.namespacedResource', ''), "{$name}Collection");
     }
 
     protected function getControllerName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedController'), "{$name}Controller");
-    }
-
-    protected function getNamespace(): string
-    {
-        $namespace = $this->option('namespace');
-        if (!$namespace) {
-            return '';
-        }
-        return trim($namespace, '\\') . '\\';
+        return $this->buildName(Config::get('crud-generator.namespacedController', ''), "{$name}Controller");
     }
 
     protected function buildName(string $namespace, string $name): string
     {
-        $prefix = $this->getNamespace();
-
-        return "{$namespace}\\{$prefix}{$name}";
+        if (!$namespace) {
+            return $name;
+        }
+        return "{$namespace}\\{$name}";
     }
 
     protected function addRoute($controller)
@@ -166,7 +161,7 @@ class CrudMakeCommand extends Command
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the table.'],
+            ['name', InputArgument::REQUIRED, 'The name of the class.'],
         ];
     }
 
@@ -180,7 +175,7 @@ class CrudMakeCommand extends Command
         return [
             ['force', null, InputOption::VALUE_NONE, 'Create the class even if the file already exists'],
             ['route', null, InputOption::VALUE_REQUIRED, 'File name of the route.'],
-            ['namespace', null, InputOption::VALUE_REQUIRED, 'Namespace of the controller.'],
+            ['table', null, InputOption::VALUE_REQUIRED, 'The table name.'],
         ];
     }
 }
