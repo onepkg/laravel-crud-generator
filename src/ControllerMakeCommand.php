@@ -28,7 +28,7 @@ class ControllerMakeCommand extends ConsoleControllerMakeCommand
      */
     protected function getStub()
     {
-        return $this->resolveStubPath('/stubs/controller.model.api.stub');
+        return $this->resolveStubPath('/stubs/controller.crud.stub');
     }
 
     /**

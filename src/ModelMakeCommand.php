@@ -138,7 +138,7 @@ class ModelMakeCommand extends ConsoleModelMakeCommand
      */
     protected function getStub()
     {
-        return $this->resolveStubPath('/stubs/model.stub');
+        return $this->resolveStubPath('/stubs/model.crud.stub');
     }
 
     /**

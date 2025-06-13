@@ -80,6 +80,18 @@ class ResourceMakeCommand extends ConsoleResourceMakeCommand
     }
 
     /**
+     * Get the stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getStub()
+    {
+        return $this->collection()
+            ? $this->resolveStubPath('/stubs/resource-collection.crud.stub')
+            : $this->resolveStubPath('/stubs/resource.crud.stub');
+    }
+
+    /**
      * Resolve the fully-qualified path to the stub.
      *
      * @param  string  $stub

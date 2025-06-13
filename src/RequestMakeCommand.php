@@ -210,7 +210,7 @@ class RequestMakeCommand extends ConsoleRequestMakeCommand
      */
     protected function getStub()
     {
-        return $this->resolveStubPath('/stubs/request.stub');
+        return $this->resolveStubPath('/stubs/request.crud.stub');
     }
 
     /**
