@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use {{ namespacedIndexRequest }};
+use {{ namespacedListingRequest }};
 use {{ namespacedStoreRequest }};
 use {{ namespacedUpdateRequest }};
 use {{ namespacedCollection }};
@@ -15,7 +15,7 @@ class {{ class }} extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index({{ indexRequest }} $request)
+    public function index({{ listingRequest }} $request)
     {
         $query = {{ model }}::query();
         $model = $query->getModel();

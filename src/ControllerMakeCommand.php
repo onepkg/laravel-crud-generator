@@ -82,19 +82,19 @@ class ControllerMakeCommand extends ConsoleControllerMakeCommand
         $namespace = $this->getNamespaceWith('App\\Http\\Requests');
 
         $classBasename = class_basename($modelClass);
-        $indexRequestClass = $classBasename.'ListRequest';
+        $listingRequestClass = $classBasename.'ListingRequest';
         $storeRequestClass = $classBasename.'StoreRequest';
         $updateRequestClass = $classBasename.'UpdateRequest';
 
         return array_merge($replace, [
-            '{{ indexRequest }}' => $indexRequestClass,
-            '{{indexRequest}}' => $indexRequestClass,
+            '{{ listingRequest }}' => $listingRequestClass,
+            '{{listingRequest}}' => $listingRequestClass,
             '{{ storeRequest }}' => $storeRequestClass,
             '{{storeRequest}}' => $storeRequestClass,
             '{{ updateRequest }}' => $updateRequestClass,
             '{{updateRequest}}' => $updateRequestClass,
-            '{{ namespacedIndexRequest }}' => $namespace.'\\'.$indexRequestClass,
-            '{{namespacedIndexRequest}}' => $namespace.'\\'.$indexRequestClass,
+            '{{ namespacedListingRequest }}' => $namespace.'\\'.$listingRequestClass,
+            '{{namespacedListingRequest}}' => $namespace.'\\'.$listingRequestClass,
             '{{ namespacedStoreRequest }}' => $namespace.'\\'.$storeRequestClass,
             '{{namespacedStoreRequest}}' => $namespace.'\\'.$storeRequestClass,
             '{{ namespacedUpdateRequest }}' => $namespace.'\\'.$updateRequestClass,

@@ -46,7 +46,7 @@ class CrudMakeCommand extends Command
             '--force' => $this->option('force'),
         ]);
         $this->call('one-pkg:make-request', [
-            'name' => $this->getIndexRequestName($name),
+            'name' => $this->getListingRequestName($name),
             '--table' => $table,
             '--force' => $this->option('force'),
         ]);
@@ -92,9 +92,9 @@ class CrudMakeCommand extends Command
         return $this->buildName(Config::get('crud-generator.namespacedModel', ''), $name);
     }
 
-    protected function getIndexRequestName(string $name): string
+    protected function getListingRequestName(string $name): string
     {
-        return $this->buildName(Config::get('crud-generator.namespacedRequest', ''), "{$name}ListRequest");
+        return $this->buildName(Config::get('crud-generator.namespacedRequest', ''), "{$name}ListingRequest");
     }
 
     protected function getStoreRequestName(string $name): string
