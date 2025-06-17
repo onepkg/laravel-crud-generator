@@ -20,7 +20,7 @@ class {{ class }} extends Controller
         $query = {{ model }}::query();
         $model = $query->getModel();
 
-        $customized = $this->customizedSearch($request);
+        $customized = $this->customizedSearch();
 
         if (method_exists($model, 'scopeSearch')) {
             $query->search($request->validated(), $customized);
@@ -75,7 +75,12 @@ class {{ class }} extends Controller
         return {{ resource }}::make(${{ modelVariable }});
     }
 
-    protected function customizedSearch($request): array
+    /**
+     * Customized search.
+     *
+     * @return array<string, callable>
+     */
+    protected function customizedSearch(): array
     {
         return [];
     }
