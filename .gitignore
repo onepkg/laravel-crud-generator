@@ -1,0 +1,8 @@
+composer.lock
+cghooks.lock
+docker-compose.override.yml
+.phpunit.result.cache
+/vendor
+**/.DS_Store
+/.idea
+/.vscode

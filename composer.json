@@ -1,0 +1,65 @@
+{
+    "name": "onepkg/laravel-crud-generator",
+    "description": "Laravel CRUD Generator",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "onepkg",
+            "email": "moxiaoxiaocheng@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0",
+        "laravel/framework": "^8.0|^9.0|^10.0|^11.0|^12.0"
+    },
+    "require-dev": {
+        "brainmaestro/composer-git-hooks": "^2.8",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^12.2",
+        "laravel/pint": "^1.22",
+        "phpstan/phpstan": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Onepkg\\LaravelCrudGenerator\\": "src/"
+        }
+    },
+    "extra": {
+        "hooks": {
+            "pre-commit": [
+                "composer pint",
+                "composer test"
+            ],
+            "pre-push": [
+                "composer pint",
+                "composer test"
+            ]
+        }
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "cghooks remove",
+            "cghooks add --ignore-lock",
+            "cghooks update"
+        ],
+        "post-merge": "composer install",
+        "post-install-cmd": [
+            "cghooks remove",
+            "cghooks add --ignore-lock",
+            "cghooks update"
+        ],
+        "cghooks": "vendor/bin/cghooks",
+        "check-style": "vendor/bin/pint ./src ./tests --test",
+        "fix-style": "vendor/bin/pint ./src ./tests",
+        "pint": "vendor/bin/pint ./src ./tests",
+        "phpstan": "vendor/bin/phpstan analyse",
+        "test": "phpunit --colors"
+    },
+    "scripts-descriptions": {
+        "check-style": "Run style checks (only dry run - no fixing!).",
+        "fix-style": "Run style checks and fix violations.",
+        "pint": "Run style checks and fix violations.",
+        "phpstan": "Run static analysis.",
+        "test": "Run all tests."
+    }
+}
