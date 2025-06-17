@@ -1,0 +1,82 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedListingRequest }};
+use {{ namespacedStoreRequest }};
+use {{ namespacedUpdateRequest }};
+use {{ namespacedCollection }};
+use {{ namespacedResource }};
+use {{ namespacedModel }};
+use {{ rootNamespace }}Http\Controllers\Controller;
+
+class {{ class }} extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index({{ listingRequest }} $request)
+    {
+        $query = {{ model }}::query();
+        $model = $query->getModel();
+
+        $customized = $this->customizedSearch($request);
+
+        if (method_exists($model, 'scopeSearch')) {
+            $query->search($request->validated(), $customized);
+        } else if (method_exists($this, 'search')) {
+            $this->search($query, $request->validated(), $customized);
+        } else if (function_exists('\auto_build_query')) {
+            \auto_build_query($query, $request->validated(), $customized);
+        }
+
+        $paginator = $query
+            ->orderBy('id', 'desc')
+            ->paginate($request->query('per-page', 10));
+
+        return {{ collection }}::make($paginator);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store({{ storeRequest }} $request)
+    {
+        $model = {{ model }}::create($request->validated());
+
+        return {{ resource }}::make($model);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show({{ model }} ${{ modelVariable }})
+    {
+        return {{ resource }}::make(${{ modelVariable }});
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update({{ updateRequest }} $request, {{ model }} ${{ modelVariable }})
+    {
+        ${{ modelVariable }}->update($request->validated());
+
+        return {{ resource }}::make(${{ modelVariable }});
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy({{ model }} ${{ modelVariable }})
+    {
+        ${{ modelVariable }}->delete();
+
+        return {{ resource }}::make(${{ modelVariable }});
+    }
+
+    protected function customizedSearch($request): array
+    {
+        return [];
+    }
+}
