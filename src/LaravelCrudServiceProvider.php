@@ -38,6 +38,7 @@ class LaravelCrudServiceProvider extends ServiceProvider
             ModelMakeCommand::class,
             RequestMakeCommand::class,
             ResourceMakeCommand::class,
+            RequestJsonBodyMakeCommand::class,
         ]);
     }
 }
