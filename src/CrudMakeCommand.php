@@ -25,7 +25,7 @@ class CrudMakeCommand extends Command
      *
      * @var string
      */
-    protected $description = '生成CRUD文件';
+    protected $description = 'Generate CRUD files';
 
     /**
      * The filesystem instance.
