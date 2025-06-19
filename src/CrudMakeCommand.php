@@ -3,6 +3,7 @@
 namespace Onepkg\LaravelCrudGenerator;
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,6 +26,25 @@ class CrudMakeCommand extends Command
      * @var string
      */
     protected $description = '生成CRUD文件';
+
+    /**
+     * The filesystem instance.
+     *
+     * @var \Illuminate\Filesystem\Filesystem
+     */
+    protected $files;
+
+    /**
+     * Create a new controller creator command instance.
+     *
+     * @return void
+     */
+    public function __construct(Filesystem $files)
+    {
+        parent::__construct();
+
+        $this->files = $files;
+    }
 
     /**
      * Execute the console command.
@@ -58,12 +78,10 @@ class CrudMakeCommand extends Command
         ]);
         $this->call('onepkg:make-resource', [
             'name' => $this->getResourceName($name),
-            '--parent' => Config::get('crud-generator.parentJsonResource'),
             '--force' => $this->option('force'),
         ]);
         $this->call('onepkg:make-resource', [
             'name' => $this->getCollectionName($name),
-            '--parent' => Config::get('crud-generator.parentResourceCollection'),
             '--force' => $this->option('force'),
         ]);
         $this->call('onepkg:make-controller', [
@@ -138,7 +156,7 @@ class CrudMakeCommand extends Command
         $routesPath = base_path("routes/{$route}.php");
 
         $uri = $this->buildUri($controller);
-        $routeLine = "\nRoute::apiResource('{$uri}', '\\\\'.{$controller}::class);\n";
+        $routeLine = $this->buildRoute($uri, $controller);
 
         file_put_contents($routesPath, $routeLine, FILE_APPEND);
     }
@@ -150,6 +168,40 @@ class CrudMakeCommand extends Command
             ->replaceLast('Controller', '')
             ->replace('\\', '/')
             ->lower();
+    }
+
+    protected function buildRoute(string $uri, string $controller): string
+    {
+        $stub = $this->files->get($this->getStub());
+
+        return str_replace(
+            ['{{ uri }}', '{{ controller }}'],
+            [$uri, $controller],
+            $stub
+        );
+    }
+
+    /**
+     * Get the stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getStub()
+    {
+        return $this->resolveStubPath('/stubs/route.crud.stub');
+    }
+
+    /**
+     * Resolve the fully-qualified path to the stub.
+     *
+     * @param  string  $stub
+     * @return string
+     */
+    protected function resolveStubPath($stub)
+    {
+        return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
+                        ? $customPath
+                        : __DIR__.$stub;
     }
 
     /**

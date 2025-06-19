@@ -1,0 +1,2 @@
+
+Route::apiResource('{{ uri }}', '\\\\'.{{ controller }}::class);

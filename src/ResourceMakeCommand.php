@@ -3,9 +3,6 @@
 namespace Onepkg\LaravelCrudGenerator;
 
 use Illuminate\Foundation\Console\ResourceMakeCommand as ConsoleResourceMakeCommand;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
 class ResourceMakeCommand extends ConsoleResourceMakeCommand
@@ -32,46 +29,8 @@ class ResourceMakeCommand extends ConsoleResourceMakeCommand
         $stub = $this->files->get($this->getStub());
 
         return $this
-            ->replaceParent($stub, $name)
             ->replaceNamespace($stub, $name)
             ->replaceClass($stub, $name);
-    }
-
-    /**
-     * @param  string  $stub
-     * @param  string  $name
-     * @return $this
-     */
-    protected function replaceParent(&$stub, $name)
-    {
-        $class = str_replace($this->getNamespace($name).'\\', '', $name);
-
-        $parent = $this->getStringValue($this->option('parent'));
-        if (! $parent || ! class_exists($parent)) {
-            if (Str::endsWith($class, 'Collection')) {
-                $parent = ResourceCollection::class;
-            } else {
-                $parent = JsonResource::class;
-            }
-        }
-        $resourceClass = class_basename($parent);
-
-        $searches = [
-            ['{{ namespacedJsonResource }}', '{{ JsonResource }}'],
-            ['{{namespacedJsonResource}}', '{{JsonResource}}'],
-            ['{{ namespacedResourceCollection }}', '{{ ResourceCollection }}'],
-            ['{{namespacedResourceCollection}}', '{{ResourceCollection}}'],
-        ];
-
-        foreach ($searches as $search) {
-            $stub = str_replace(
-                $search,
-                [$parent, $resourceClass],
-                $stub
-            );
-        }
-
-        return $this;
     }
 
     /**
