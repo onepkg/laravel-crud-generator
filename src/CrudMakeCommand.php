@@ -17,7 +17,7 @@ class CrudMakeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'onepkg:make-crud';
+    protected $name = 'onepkg:make-crud';
 
     /**
      * The console command description.
@@ -25,12 +25,6 @@ class CrudMakeCommand extends Command
      * @var string
      */
     protected $description = '生成CRUD文件';
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->specifyParameters();
-    }
 
     /**
      * Execute the console command.

@@ -2,7 +2,6 @@
 
 namespace Onepkg\LaravelCrudGenerator;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Console\ResourceMakeCommand as ConsoleResourceMakeCommand;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -18,13 +17,7 @@ class ResourceMakeCommand extends ConsoleResourceMakeCommand
      *
      * @var string
      */
-    protected $signature = 'onepkg:make-resource';
-
-    public function __construct(Filesystem $files)
-    {
-        parent::__construct($files);
-        $this->specifyParameters();
-    }
+    protected $name = 'onepkg:make-resource';
 
     /**
      * Build the class with the given name.
@@ -113,11 +106,9 @@ class ResourceMakeCommand extends ConsoleResourceMakeCommand
      */
     protected function getOptions(): array
     {
-        $options = parent::getOptions();
-
-        return array_merge($options, [
-            ['force', null, InputOption::VALUE_NONE, 'Create the class even if the resource already exists'],
-            ['parent', null, InputOption::VALUE_OPTIONAL, 'Parent resource class'],
-        ]);
+        return [
+            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the resource already exists'],
+            ['collection', 'c', InputOption::VALUE_NONE, 'Create a resource collection'],
+        ];
     }
 }

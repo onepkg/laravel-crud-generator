@@ -2,7 +2,6 @@
 
 namespace Onepkg\LaravelCrudGenerator;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Console\ControllerMakeCommand as ConsoleControllerMakeCommand;
 use Illuminate\Support\Str;
 
@@ -15,13 +14,7 @@ class ControllerMakeCommand extends ConsoleControllerMakeCommand
      *
      * @var string
      */
-    protected $signature = 'onepkg:make-controller';
-
-    public function __construct(Filesystem $files)
-    {
-        parent::__construct($files);
-        $this->specifyParameters();
-    }
+    protected $name = 'onepkg:make-controller';
 
     /**
      * Get the stub file for the generator.
