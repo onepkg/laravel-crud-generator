@@ -101,7 +101,7 @@ class RequestMakeCommand extends ConsoleRequestMakeCommand
         $name = $this->getStringValue($this->argument('name'));
         $rules = [];
 
-        if ($column['IS_NULLABLE'] === 'NO' && $column['COLUMN_DEFAULT'] === null && ! Str::startsWith(class_basename($name), 'Index')) {
+        if ($column['IS_NULLABLE'] === 'NO' && $column['COLUMN_DEFAULT'] === null && ! $this->isListingRequest($name)) {
             $rules[] = 'required';
         }
 
@@ -140,7 +140,7 @@ class RequestMakeCommand extends ConsoleRequestMakeCommand
             $rules[] = 'url';
         }
 
-        if (Str::startsWith($name, 'Index')) {
+        if ($this->isListingRequest($name)) {
             return implode('|', $rules);
         }
 
@@ -184,6 +184,11 @@ class RequestMakeCommand extends ConsoleRequestMakeCommand
         $result .= ']';
 
         return $result;
+    }
+
+    protected function isListingRequest(string $name): bool
+    {
+        return Str::endsWith($name, 'ListingRequest');
     }
 
     protected function getTable(string $name): string
