@@ -151,7 +151,7 @@ class CrudMakeCommand extends Command
     {
         $route = $this->getStringValue($this->option('route'));
         if (! $route) {
-            $route = 'web';
+            $route = 'api';
         }
         $routesPath = base_path("routes/{$route}.php");
 
