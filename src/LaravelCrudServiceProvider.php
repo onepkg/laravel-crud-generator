@@ -2,6 +2,8 @@
 
 namespace Onepkg\LaravelCrudGenerator;
 
+use Illuminate\Foundation\Events\PublishingStubs;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelCrudServiceProvider extends ServiceProvider
@@ -22,6 +24,10 @@ class LaravelCrudServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/courier.php' => config_path('crud-generator.php'),
         ]);
+
+        if (class_exists(PublishingStubs::class)) {
+            Event::listen(PublishingStubs::class, AddStubsToPublish::class);
+        }
 
         $this->registerCommands();
     }
