@@ -33,7 +33,7 @@ if (! function_exists('auto_build_query')) {
                 continue;
             }
 
-            if (strpos(',', $value) !== false) {
+            if (is_string($value) && strpos(',', $value) !== false) {
                 $value = explode(',', $value);
             }
 
@@ -57,10 +57,10 @@ if (! function_exists('auto_build_query')) {
                 if (! $startTime) {
                     return;
                 }
-                if (isset($value[1])) {
+                if (isset($value[1]) && $value[1] !== '') {
                     $endTime = Carbon::make($value[1]);
                     if (! $endTime) {
-                        return;
+                        $endTime = Carbon::now();
                     }
                 } else {
                     $endTime = Carbon::now();
@@ -71,10 +71,10 @@ if (! function_exists('auto_build_query')) {
                 if (! $startTime) {
                     return;
                 }
-                if (isset($value[1])) {
+                if (isset($value[1]) && $value[1] !== '') {
                     $endTime = Carbon::make($value[1]);
                     if (! $endTime) {
-                        return;
+                        $endTime = Carbon::now();
                     }
                 } else {
                     $endTime = Carbon::now();
