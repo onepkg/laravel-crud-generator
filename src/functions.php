@@ -55,7 +55,7 @@ if (! function_exists('auto_build_query')) {
                 }
                 $startTime = Carbon::make($value[0]);
                 if (! $startTime) {
-                    return;
+                    continue;
                 }
                 if (isset($value[1]) && $value[1] !== '') {
                     $endTime = Carbon::make($value[1]);
@@ -69,7 +69,7 @@ if (! function_exists('auto_build_query')) {
             } elseif (Str::contains($typeName, 'date')) {
                 $startTime = Carbon::make($value[0]);
                 if (! $startTime) {
-                    return;
+                    continue;
                 }
                 if (isset($value[1]) && $value[1] !== '') {
                     $endTime = Carbon::make($value[1]);
